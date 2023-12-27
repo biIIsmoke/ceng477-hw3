@@ -1,0 +1,18 @@
+﻿  main.cpp
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(95,11): warning C4101: 'index': unreferenced local variable
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(254,15): warning C4267: 'initializing': conversion from 'size_t' to 'GLint', possible loss of data
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(279,15): warning C4267: 'initializing': conversion from 'size_t' to 'GLint', possible loss of data
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(368,48): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(369,47): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(370,27): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(447,45): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(459,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(464,69): warning C4305: 'argument': truncation from 'double' to 'T'
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(464,69): warning C4305:         with
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(464,69): warning C4305:         [
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(464,69): warning C4305:             T=float
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(464,69): warning C4305:         ]
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(483,14): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(497,16): warning C4305: 'initializing': truncation from 'double' to 'float'
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  Bunny Run.vcxproj -> C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\x64\Debug\Bunny Run.exe
