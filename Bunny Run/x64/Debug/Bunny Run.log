@@ -1,18 +1,38 @@
 ﻿  main.cpp
-C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(95,11): warning C4101: 'index': unreferenced local variable
-C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(254,15): warning C4267: 'initializing': conversion from 'size_t' to 'GLint', possible loss of data
-C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(279,15): warning C4267: 'initializing': conversion from 'size_t' to 'GLint', possible loss of data
-C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(368,48): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(369,47): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(370,27): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(447,45): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(459,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(464,69): warning C4305: 'argument': truncation from 'double' to 'T'
-C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(464,69): warning C4305:         with
-C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(464,69): warning C4305:         [
-C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(464,69): warning C4305:             T=float
-C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(464,69): warning C4305:         ]
-C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(483,14): warning C4305: '+=': truncation from 'double' to 'float'
-C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(497,16): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(98,20): warning C4101: 'index': unreferenced local variable
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(260,18): warning C4267: 'initializing': conversion from 'size_t' to 'GLint', possible loss of data
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(284,18): warning C4267: 'initializing': conversion from 'size_t' to 'GLint', possible loss of data
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(343,51): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(344,50): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(345,30): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(471,33): warning C4838: conversion from 'FT_Pos' to 'GLuint' requires a narrowing conversion
+C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\main.cpp(513,45): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+freetype.lib(ftinit.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftinit.obj)' or at ''; linking object as if no debug info
+freetype.lib(ftbase.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftbase.obj)' or at ''; linking object as if no debug info
+freetype.lib(autofit.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(autofit.obj)' or at ''; linking object as if no debug info
+freetype.lib(truetype.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(truetype.obj)' or at ''; linking object as if no debug info
+freetype.lib(type1.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(type1.obj)' or at ''; linking object as if no debug info
+freetype.lib(cff.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(cff.obj)' or at ''; linking object as if no debug info
+freetype.lib(type1cid.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(type1cid.obj)' or at ''; linking object as if no debug info
+freetype.lib(pfr.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(pfr.obj)' or at ''; linking object as if no debug info
+freetype.lib(type42.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(type42.obj)' or at ''; linking object as if no debug info
+freetype.lib(winfnt.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(winfnt.obj)' or at ''; linking object as if no debug info
+freetype.lib(pcf.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(pcf.obj)' or at ''; linking object as if no debug info
+freetype.lib(bdf.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(bdf.obj)' or at ''; linking object as if no debug info
+freetype.lib(psaux.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(psaux.obj)' or at ''; linking object as if no debug info
+freetype.lib(psmodule.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(psmodule.obj)' or at ''; linking object as if no debug info
+freetype.lib(pshinter.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(pshinter.obj)' or at ''; linking object as if no debug info
+freetype.lib(sfnt.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(sfnt.obj)' or at ''; linking object as if no debug info
+freetype.lib(smooth.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(smooth.obj)' or at ''; linking object as if no debug info
+freetype.lib(raster.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(raster.obj)' or at ''; linking object as if no debug info
+freetype.lib(sdf.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(sdf.obj)' or at ''; linking object as if no debug info
+freetype.lib(svg.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(svg.obj)' or at ''; linking object as if no debug info
+freetype.lib(ftsystem.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftsystem.obj)' or at ''; linking object as if no debug info
+freetype.lib(ftmm.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftmm.obj)' or at ''; linking object as if no debug info
+freetype.lib(ftgzip.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftgzip.obj)' or at ''; linking object as if no debug info
+freetype.lib(ftlzw.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftlzw.obj)' or at ''; linking object as if no debug info
+freetype.lib(ftbitmap.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftbitmap.obj)' or at ''; linking object as if no debug info
+freetype.lib(ftdebug.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftdebug.obj)' or at ''; linking object as if no debug info
+LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
 LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Bunny Run.vcxproj -> C:\Users\BOSS\Desktop\20231\CENG477\ceng477-hw3\Bunny Run\x64\Debug\Bunny Run.exe
