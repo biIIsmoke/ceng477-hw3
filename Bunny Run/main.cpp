@@ -24,7 +24,7 @@ using namespace std;
 GLuint gProgram[3];
 GLint gIntensityLoc;
 float gIntensity = 1000;
-int gWidth = 640, gHeight = 480;
+int gWidth = 1280, gHeight = 720;
 
 struct Vertex
 {
@@ -95,6 +95,10 @@ struct Character {
 };
 
 std::map<GLchar, Character> Characters;
+
+
+/*-----------------------------player state-------------------------------------*/
+bool isAlive = true;
 
 
 bool ParseObj(const string& fileName, ModelData& model)
@@ -314,9 +318,10 @@ void createFS(GLuint& program, const string& filename)
 
 void initShaders()
 {
-    gProgram[0] = glCreateProgram();
-    gProgram[1] = glCreateProgram();
-    gProgram[2] = glCreateProgram();
+    gProgram[0] = glCreateProgram(); //bunny
+    gProgram[1] = glCreateProgram(); //quad
+    gProgram[2] = glCreateProgram(); //text
+    //gProgram[3] = glCreateProgram(); //cubes
 
     createVS(gProgram[0], "vert0.glsl");
     createFS(gProgram[0], "frag0.glsl");
@@ -592,6 +597,10 @@ void display()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	static float angle = 0;
+	static float cubeDisplacement = 0;
+	static int score = 0;
+    glm::vec3 textColor = glm::vec3(255, 255, 0);
+    
 
 
     /*------------------------------------------bunny transformation and draw-------------------------------------------------*/
@@ -601,11 +610,14 @@ void display()
 	//glTranslatef(-2, 0, -10);
 	//glRotatef(angle, 0, 1, 0);
 
-    glm::mat4 T = glm::translate(glm::mat4(1.f), glm::vec3(-2.f, 0.f, -10.f));
-    glm::mat4 R = glm::rotate(glm::mat4(1.f), glm::radians(angle), glm::vec3(0, 1, 0));
-    glm::mat4 modelMat = T * R;
+    glm::mat4 T = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -1.5f, -1.2f));
+
+    glm::mat4 S = glm::scale(glm::mat4(1.f), glm::vec3(0.15f, 0.25f, 0.1f));
+
+    glm::mat4 R = glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(0, 1, 0));
+    glm::mat4 modelMat = T * S * R;
     glm::mat4 modelMatInv = glm::transpose(glm::inverse(modelMat));
-    glm::mat4 perspMat = glm::perspective(glm::radians(45.0f), 1.f, 1.0f, 100.0f);
+    glm::mat4 perspMat = glm::perspective(glm::radians(120.0f), 1.f, 1.0f, 100.0f);
 
     glUniformMatrix4fv(glGetUniformLocation(gProgram[0], "modelingMat"), 1, GL_FALSE, glm::value_ptr(modelMat));
     glUniformMatrix4fv(glGetUniformLocation(gProgram[0], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
@@ -621,7 +633,9 @@ void display()
 	//glRotatef(-angle, 0, 1, 0);
 
     T = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -2.f, -10.f));
-    glm::mat4 S = glm::scale(glm::mat4(1.f), glm::vec3(1.f, 200000000.f, 10.f));
+
+    S = glm::scale(glm::mat4(1.f), glm::vec3(2.f, 1.f, 100000.f));
+
     R = glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(1, 0, 0));
     modelMat = T * S * R;
     modelMatInv = glm::transpose(glm::inverse(modelMat));
@@ -634,19 +648,28 @@ void display()
 
     /*------------------------------------------cubes transformation and draw-------------------------------------------------*/
     
+    for (int i = 0; i < 3; i++) { // use i to place cubes on x axis and move them on z using displacement, if displacement is above some amount, make it reset to 0
 
+    }
     
     //drawModel(cubeModel, cubeVBO);
 
     /*------------------------------------------text transformation and draw-------------------------------------------------*/
 
     assert(glGetError() == GL_NO_ERROR);
+    if (!isAlive) {
+        textColor = glm::vec3(255, 0, 0);
+    }
 
-    renderText("CENG 477 - 2022", 0, 0, 1, glm::vec3(0, 1, 1));
+    renderText("Score: " + std::to_string(score), 0, 686, 1, textColor);
 
     assert(glGetError() == GL_NO_ERROR);
 
 	angle += 0.5;
+
+    if (isAlive) {
+        score += 1;
+    }
 }
 
 void reshape(GLFWwindow* window, int w, int h)
