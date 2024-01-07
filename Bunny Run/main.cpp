@@ -71,9 +71,20 @@ ModelData bunnyModel;
 ModelData cubeModel;
 ModelData quadModel;
 
-GLuint gVertexAttribBuffer, gTextVBO, gIndexBuffer;
-GLint gInVertexLoc, gInNormalLoc;
-int gVertexDataSizeInBytes, gNormalDataSizeInBytes;
+GLuint gTextVBO;
+
+struct VBOData {
+    GLuint vertexAttribBuffer;
+    GLuint indexBuffer;
+    GLint inVertexLoc;
+    GLint inNormalLoc;
+    int vertexDataSizeInBytes;
+    int normalDataSizeInBytes;
+};
+
+VBOData bunnyVBO;
+VBOData cubeVBO;
+VBOData quadVBO;
 
 /// Holds all state information relevant to a character as loaded using FreeType
 struct Character {
@@ -332,22 +343,22 @@ void initShaders()
     glUniform1f(gIntensityLoc, gIntensity);
 }
 
-void initVBO(ModelData& model)
+void initVBO(ModelData& model, VBOData& currentVBO)
 {
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     assert(glGetError() == GL_NONE);
 
-    glGenBuffers(1, &gVertexAttribBuffer);
-    glGenBuffers(1, &gIndexBuffer);
+    glGenBuffers(1, &currentVBO.vertexAttribBuffer);
+    glGenBuffers(1, &currentVBO.indexBuffer);
 
-    assert(gVertexAttribBuffer > 0 && gIndexBuffer > 0);
+    assert(currentVBO.vertexAttribBuffer > 0 && currentVBO.indexBuffer > 0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, gVertexAttribBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIndexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, currentVBO.vertexAttribBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, currentVBO.indexBuffer);
 
-    gVertexDataSizeInBytes = model.vertices.size() * 3 * sizeof(GLfloat);
-    gNormalDataSizeInBytes = model.normals.size() * 3 * sizeof(GLfloat);
+    currentVBO.vertexDataSizeInBytes = model.vertices.size() * 3 * sizeof(GLfloat);
+    currentVBO.normalDataSizeInBytes = model.normals.size() * 3 * sizeof(GLfloat);
     int indexDataSizeInBytes = model.faces.size() * 3 * sizeof(GLuint);
     GLfloat* vertexData = new GLfloat [model.vertices.size() * 3];
     GLfloat* normalData = new GLfloat [model.normals.size() * 3];
@@ -393,9 +404,9 @@ void initVBO(ModelData& model)
     }
 
 
-    glBufferData(GL_ARRAY_BUFFER, gVertexDataSizeInBytes + gNormalDataSizeInBytes, 0, GL_STATIC_DRAW);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, gVertexDataSizeInBytes, vertexData);
-    glBufferSubData(GL_ARRAY_BUFFER, gVertexDataSizeInBytes, gNormalDataSizeInBytes, normalData);
+    glBufferData(GL_ARRAY_BUFFER, currentVBO.vertexDataSizeInBytes + currentVBO.normalDataSizeInBytes, 0, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, currentVBO.vertexDataSizeInBytes, vertexData);
+    glBufferSubData(GL_ARRAY_BUFFER, currentVBO.vertexDataSizeInBytes, currentVBO.normalDataSizeInBytes, normalData);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexDataSizeInBytes, indexData, GL_STATIC_DRAW);
 
     // done copying; can free now
@@ -404,7 +415,7 @@ void initVBO(ModelData& model)
     delete[] indexData;
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(gVertexDataSizeInBytes));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(currentVBO.vertexDataSizeInBytes));
 
 }
 
@@ -501,20 +512,24 @@ void init()
 {
 	//ParseObj("armadillo.obj");
 	ParseObj("bunny.obj", bunnyModel);
+	ParseObj("cube.obj", cubeModel);
+	ParseObj("quad.obj", quadModel);
 
     glEnable(GL_DEPTH_TEST);
     initShaders();
     initFonts(gWidth, gHeight);
-    initVBO(bunnyModel);
+    initVBO(bunnyModel, bunnyVBO);
+    initVBO(cubeModel, cubeVBO);
+    initVBO(quadModel, quadVBO);
 }
 
-void drawModel(ModelData& model)
+void drawModel(ModelData& model, VBOData& currentVBO)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexAttribBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIndexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, currentVBO.vertexAttribBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, currentVBO.indexBuffer);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(gVertexDataSizeInBytes));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(currentVBO.vertexDataSizeInBytes));
 
 	glDrawElements(GL_TRIANGLES, model.faces.size() * 3, GL_UNSIGNED_INT, 0);
 }
@@ -578,6 +593,9 @@ void display()
 
 	static float angle = 0;
 
+
+    /*------------------------------------------bunny transformation and draw-------------------------------------------------*/
+
     glUseProgram(gProgram[0]);
 	//glLoadIdentity();
 	//glTranslatef(-2, 0, -10);
@@ -593,7 +611,9 @@ void display()
     glUniformMatrix4fv(glGetUniformLocation(gProgram[0], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
     glUniformMatrix4fv(glGetUniformLocation(gProgram[0], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
 
-    drawModel(bunnyModel);
+    drawModel(bunnyModel, bunnyVBO);
+
+    /*------------------------------------------quad transformation and draw-------------------------------------------------*/
 
     glUseProgram(gProgram[1]);
 	//glLoadIdentity();
@@ -601,15 +621,24 @@ void display()
 	//glRotatef(-angle, 0, 1, 0);
 
     T = glm::translate(glm::mat4(1.f), glm::vec3(2.f, 0.f, -10.f));
-    R = glm::rotate(glm::mat4(1.f), glm::radians(-angle), glm::vec3(0, 1, 0));
+    R = glm::rotate(glm::mat4(1.f), glm::radians(0.f), glm::vec3(0, 1, 0));
     modelMat = T * R;
     modelMatInv = glm::transpose(glm::inverse(modelMat));
 
     glUniformMatrix4fv(glGetUniformLocation(gProgram[1], "modelingMat"), 1, GL_FALSE, glm::value_ptr(modelMat));
     glUniformMatrix4fv(glGetUniformLocation(gProgram[1], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
     glUniformMatrix4fv(glGetUniformLocation(gProgram[1], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
+        
+    drawModel(quadModel, quadVBO);
 
-    drawModel(bunnyModel);
+    /*------------------------------------------cubes transformation and draw-------------------------------------------------*/
+    
+
+    
+    //drawModel(cubeModel, cubeVBO);
+
+    /*------------------------------------------text transformation and draw-------------------------------------------------*/
+
     assert(glGetError() == GL_NO_ERROR);
 
     renderText("CENG 477 - 2022", 0, 0, 1, glm::vec3(0, 1, 1));
