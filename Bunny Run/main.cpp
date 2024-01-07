@@ -620,9 +620,10 @@ void display()
 	//glTranslatef(2, 0, -10);
 	//glRotatef(-angle, 0, 1, 0);
 
-    T = glm::translate(glm::mat4(1.f), glm::vec3(2.f, 0.f, -10.f));
-    R = glm::rotate(glm::mat4(1.f), glm::radians(0.f), glm::vec3(0, 1, 0));
-    modelMat = T * R;
+    T = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -2.f, -10.f));
+    glm::mat4 S = glm::scale(glm::mat4(1.f), glm::vec3(1.f, 200000000.f, 10.f));
+    R = glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(1, 0, 0));
+    modelMat = T * S * R;
     modelMatInv = glm::transpose(glm::inverse(modelMat));
 
     glUniformMatrix4fv(glGetUniformLocation(gProgram[1], "modelingMat"), 1, GL_FALSE, glm::value_ptr(modelMat));
