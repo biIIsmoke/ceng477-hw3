@@ -60,10 +60,16 @@ struct Face
     GLuint vIndex[3], tIndex[3], nIndex[3];
 };
 
-vector<Vertex> gVertices;
-vector<Texture> gTextures;
-vector<Normal> gNormals;
-vector<Face> gFaces;
+struct ModelData {
+    std::vector<Vertex> vertices;
+    std::vector<Texture> textures;
+    std::vector<Normal> normals;
+    std::vector<Face> faces;
+};
+
+ModelData bunnyModel;
+ModelData cubeModel;
+ModelData quadModel;
 
 GLuint gVertexAttribBuffer, gTextVBO, gIndexBuffer;
 GLint gInVertexLoc, gInNormalLoc;
@@ -80,7 +86,7 @@ struct Character {
 std::map<GLchar, Character> Characters;
 
 
-bool ParseObj(const string& fileName)
+bool ParseObj(const string& fileName, ModelData& model)
 {
     fstream myfile;
 
@@ -110,19 +116,19 @@ bool ParseObj(const string& fileName)
                     {
                         str >> tmp; // consume "vt"
                         str >> c1 >> c2;
-                        gTextures.push_back(Texture(c1, c2));
+                        model.textures.push_back(Texture(c1, c2));
                     }
                     else if (curLine[1] == 'n') // normal
                     {
                         str >> tmp; // consume "vn"
                         str >> c1 >> c2 >> c3;
-                        gNormals.push_back(Normal(c1, c2, c3));
+                        model.normals.push_back(Normal(c1, c2, c3));
                     }
                     else // vertex
                     {
                         str >> tmp; // consume "v"
                         str >> c1 >> c2 >> c3;
-                        gVertices.push_back(Vertex(c1, c2, c3));
+                        model.vertices.push_back(Vertex(c1, c2, c3));
                     }
                 }
                 else if (curLine[0] == 'f') // face
@@ -149,7 +155,7 @@ bool ParseObj(const string& fileName)
 						tIndex[c] -= 1;
 					}
 
-                    gFaces.push_back(Face(vIndex, tIndex, nIndex));
+                    model.faces.push_back(Face(vIndex, tIndex, nIndex));
                 }
                 else
                 {
@@ -210,7 +216,7 @@ bool ParseObj(const string& fileName)
 	}
 	*/
 
-	assert(gVertices.size() == gNormals.size());
+	assert(model.vertices.size() == model.normals.size());
 
     return true;
 }
@@ -326,7 +332,7 @@ void initShaders()
     glUniform1f(gIntensityLoc, gIntensity);
 }
 
-void initVBO()
+void initVBO(ModelData& model)
 {
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
@@ -340,29 +346,29 @@ void initVBO()
     glBindBuffer(GL_ARRAY_BUFFER, gVertexAttribBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIndexBuffer);
 
-    gVertexDataSizeInBytes = gVertices.size() * 3 * sizeof(GLfloat);
-    gNormalDataSizeInBytes = gNormals.size() * 3 * sizeof(GLfloat);
-    int indexDataSizeInBytes = gFaces.size() * 3 * sizeof(GLuint);
-    GLfloat* vertexData = new GLfloat [gVertices.size() * 3];
-    GLfloat* normalData = new GLfloat [gNormals.size() * 3];
-    GLuint* indexData = new GLuint [gFaces.size() * 3];
+    gVertexDataSizeInBytes = model.vertices.size() * 3 * sizeof(GLfloat);
+    gNormalDataSizeInBytes = model.normals.size() * 3 * sizeof(GLfloat);
+    int indexDataSizeInBytes = model.faces.size() * 3 * sizeof(GLuint);
+    GLfloat* vertexData = new GLfloat [model.vertices.size() * 3];
+    GLfloat* normalData = new GLfloat [model.normals.size() * 3];
+    GLuint* indexData = new GLuint [model.faces.size() * 3];
 
     float minX = 1e6, maxX = -1e6;
     float minY = 1e6, maxY = -1e6;
     float minZ = 1e6, maxZ = -1e6;
 
-    for (int i = 0; i < gVertices.size(); ++i)
+    for (int i = 0; i < model.vertices.size(); ++i)
     {
-        vertexData[3*i] = gVertices[i].x;
-        vertexData[3*i+1] = gVertices[i].y;
-        vertexData[3*i+2] = gVertices[i].z;
+        vertexData[3*i] = model.vertices[i].x;
+        vertexData[3*i+1] = model.vertices[i].y;
+        vertexData[3*i+2] = model.vertices[i].z;
 
-        minX = std::min(minX, gVertices[i].x);
-        maxX = std::max(maxX, gVertices[i].x);
-        minY = std::min(minY, gVertices[i].y);
-        maxY = std::max(maxY, gVertices[i].y);
-        minZ = std::min(minZ, gVertices[i].z);
-        maxZ = std::max(maxZ, gVertices[i].z);
+        minX = std::min(minX, model.vertices[i].x);
+        maxX = std::max(maxX, model.vertices[i].x);
+        minY = std::min(minY, model.vertices[i].y);
+        maxY = std::max(maxY, model.vertices[i].y);
+        minZ = std::min(minZ, model.vertices[i].z);
+        maxZ = std::max(maxZ, model.vertices[i].z);
     }
 
     std::cout << "minX = " << minX << std::endl;
@@ -372,18 +378,18 @@ void initVBO()
     std::cout << "minZ = " << minZ << std::endl;
     std::cout << "maxZ = " << maxZ << std::endl;
 
-    for (int i = 0; i < gNormals.size(); ++i)
+    for (int i = 0; i < model.normals.size(); ++i)
     {
-        normalData[3*i] = gNormals[i].x;
-        normalData[3*i+1] = gNormals[i].y;
-        normalData[3*i+2] = gNormals[i].z;
+        normalData[3*i] = model.normals[i].x;
+        normalData[3*i+1] = model.normals[i].y;
+        normalData[3*i+2] = model.normals[i].z;
     }
 
-    for (int i = 0; i < gFaces.size(); ++i)
+    for (int i = 0; i < model.faces.size(); ++i)
     {
-        indexData[3*i] = gFaces[i].vIndex[0];
-        indexData[3*i+1] = gFaces[i].vIndex[1];
-        indexData[3*i+2] = gFaces[i].vIndex[2];
+        indexData[3*i] = model.faces[i].vIndex[0];
+        indexData[3*i+1] = model.faces[i].vIndex[1];
+        indexData[3*i+2] = model.faces[i].vIndex[2];
     }
 
 
@@ -494,15 +500,15 @@ void initFonts(int windowWidth, int windowHeight)
 void init() 
 {
 	//ParseObj("armadillo.obj");
-	ParseObj("bunny.obj");
+	ParseObj("bunny.obj", bunnyModel);
 
     glEnable(GL_DEPTH_TEST);
     initShaders();
     initFonts(gWidth, gHeight);
-    initVBO();
+    initVBO(bunnyModel);
 }
 
-void drawModel()
+void drawModel(ModelData& model)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, gVertexAttribBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIndexBuffer);
@@ -510,7 +516,7 @@ void drawModel()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(gVertexDataSizeInBytes));
 
-	glDrawElements(GL_TRIANGLES, gFaces.size() * 3, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, model.faces.size() * 3, GL_UNSIGNED_INT, 0);
 }
 
 void renderText(const std::string& text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
@@ -587,7 +593,7 @@ void display()
     glUniformMatrix4fv(glGetUniformLocation(gProgram[0], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
     glUniformMatrix4fv(glGetUniformLocation(gProgram[0], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
 
-    drawModel();
+    drawModel(bunnyModel);
 
     glUseProgram(gProgram[1]);
 	//glLoadIdentity();
@@ -603,7 +609,7 @@ void display()
     glUniformMatrix4fv(glGetUniformLocation(gProgram[1], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
     glUniformMatrix4fv(glGetUniformLocation(gProgram[1], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
 
-    drawModel();
+    drawModel(bunnyModel);
     assert(glGetError() == GL_NO_ERROR);
 
     renderText("CENG 477 - 2022", 0, 0, 1, glm::vec3(0, 1, 1));
