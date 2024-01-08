@@ -99,7 +99,8 @@ std::map<GLchar, Character> Characters;
 
 /*-----------------------------player state-------------------------------------*/
 bool isAlive = true;
-float displacement = 0;
+float xDisplacement = 0;
+float zDisplacement = 0;
 int score = 0;
 float speed = 0.025f;
 
@@ -618,7 +619,7 @@ void display()
 	//glTranslatef(-2, 0, -10);
 	//glRotatef(angle, 0, 1, 0);
 
-    glm::mat4 T = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -1.5f, -1.2f));
+    glm::mat4 T = glm::translate(glm::mat4(1.f), glm::vec3(0.f + xDisplacement, -1.5f, -1.2f));
 
     glm::mat4 S = glm::scale(glm::mat4(1.f), glm::vec3(0.15f, 0.25f, 0.1f));
 
@@ -652,7 +653,7 @@ void display()
     glUniformMatrix4fv(glGetUniformLocation(gProgram[1], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
     glUniformMatrix4fv(glGetUniformLocation(gProgram[1], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
 
-    glUniform1f(glGetUniformLocation(gProgram[1], "offset"), displacement*8);
+    glUniform1f(glGetUniformLocation(gProgram[1], "offset"), zDisplacement *8);
         
     drawModel(quadModel, quadVBO);
 
@@ -662,7 +663,7 @@ void display()
 
     // place cubes on x axis and move them on z using displacement, if displacement is above some amount, make it reset to 0
     
-    T = glm::translate(glm::mat4(1.f), glm::vec3(-0.25f, -0.1f, -10.f + displacement));
+    T = glm::translate(glm::mat4(1.f), glm::vec3(-0.25f, -0.1f, -10.f + zDisplacement));
 
     S = glm::scale(glm::mat4(1.f), glm::vec3(0.05f, 0.2f, 0.05f));
 
@@ -675,7 +676,7 @@ void display()
 
     drawModel(cubeModel, cubeVBO);
 
-    T = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -0.1f, -10.f + displacement));
+    T = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -0.1f, -10.f + zDisplacement));
 
     modelMat = T * S;
     modelMatInv = glm::transpose(glm::inverse(modelMat));
@@ -686,7 +687,7 @@ void display()
 
     drawModel(cubeModel, cubeVBO);
 
-    T = glm::translate(glm::mat4(1.f), glm::vec3(0.25f, -0.1f, -10.f + displacement));
+    T = glm::translate(glm::mat4(1.f), glm::vec3(0.25f, -0.1f, -10.f + zDisplacement));
 
     modelMat = T * S;
     modelMatInv = glm::transpose(glm::inverse(modelMat));
@@ -711,11 +712,11 @@ void display()
 
 	angle += 0.5;
     if (isAlive) {
-        displacement += speed;
+        zDisplacement += speed;
         score += speed;
 
-        if(displacement > 10){
-            displacement = 0;
+        if(zDisplacement > 10){
+            zDisplacement = 0;
         }
     }
 }
@@ -740,7 +741,8 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
     else if (key == GLFW_KEY_R && action == GLFW_PRESS)
     {
         cout << "R pressed" << endl;
-        displacement = 0;
+        xDisplacement = 0;
+        zDisplacement = 0;
         score = 0;
         speed = 0.05f;
         //glUseProgram(gProgram[1]);
@@ -749,19 +751,23 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         cout << "A pressed" << endl;
         //glUseProgram(gProgram[0]);
+        xDisplacement -= 0.75f;
+        if (xDisplacement < -1.5f) {
+            xDisplacement = -1.5f;
+        }
     }
     else if (key == GLFW_KEY_D && action == GLFW_PRESS)
     {
         cout << "D pressed" << endl;
-        isAlive = !isAlive;
+        xDisplacement += 0.75f;
+        if (xDisplacement > 1.5f) {
+            xDisplacement = 1.5f;
+        }
     }
-    else if (key == GLFW_KEY_B && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_K && action == GLFW_PRESS)
     {
-        cout << "B pressed" << endl;
-        gIntensity *= 1.5;
-        cout << "gIntensity = " << gIntensity << endl;
-        glUseProgram(gProgram[0]);
-        glUniform1f(gIntensityLoc, gIntensity);
+        cout << "K pressed" << endl;
+        isAlive = !isAlive;
     }
 }
 
