@@ -99,6 +99,9 @@ std::map<GLchar, Character> Characters;
 
 /*-----------------------------player state-------------------------------------*/
 bool isAlive = true;
+float displacement = 0;
+int score = 0;
+float speed = 0.05f;
 
 
 bool ParseObj(const string& fileName, ModelData& model)
@@ -604,8 +607,6 @@ void display()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	static float angle = 0;
-	static float cubeDisplacement = 0;
-	static int score = 0;
     glm::vec3 textColor = glm::vec3(255, 255, 0);
     
 
@@ -659,7 +660,7 @@ void display()
 
     // place cubes on x axis and move them on z using displacement, if displacement is above some amount, make it reset to 0
     
-    T = glm::translate(glm::mat4(1.f), glm::vec3(-0.25f, 0.f, -1.f));
+    T = glm::translate(glm::mat4(1.f), glm::vec3(-0.25f, 0.f, -20.f + displacement));
 
     S = glm::scale(glm::mat4(1.f), glm::vec3(0.05f, 0.2f, 0.05f));
 
@@ -672,7 +673,7 @@ void display()
 
     drawModel(cubeModel, cubeVBO);
 
-    T = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, -1.f));
+    T = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, -20.f + displacement));
 
     modelMat = T * S;
     modelMatInv = glm::transpose(glm::inverse(modelMat));
@@ -683,7 +684,7 @@ void display()
 
     drawModel(cubeModel, cubeVBO);
 
-    T = glm::translate(glm::mat4(1.f), glm::vec3(0.25f, 0.f, -1.f));
+    T = glm::translate(glm::mat4(1.f), glm::vec3(0.25f, 0.f, -20.f + displacement));
 
     modelMat = T * S;
     modelMatInv = glm::transpose(glm::inverse(modelMat));
@@ -707,9 +708,13 @@ void display()
     assert(glGetError() == GL_NO_ERROR);
 
 	angle += 0.5;
-
     if (isAlive) {
-        score += 1;
+        displacement += speed;
+        score += speed;
+
+        if(displacement > 20){
+            displacement = 0;
+        }
     }
 }
 
@@ -730,23 +735,23 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
-    else if (key == GLFW_KEY_F && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_R && action == GLFW_PRESS)
     {
-        cout << "F pressed" << endl;
-        glUseProgram(gProgram[1]);
+        cout << "R pressed" << endl;
+        displacement = 0;
+        score = 0;
+        speed = 0.05f;
+        //glUseProgram(gProgram[1]);
     }
-    else if (key == GLFW_KEY_V && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_A && action == GLFW_PRESS)
     {
-        cout << "V pressed" << endl;
-        glUseProgram(gProgram[0]);
+        cout << "A pressed" << endl;
+        //glUseProgram(gProgram[0]);
     }
     else if (key == GLFW_KEY_D && action == GLFW_PRESS)
     {
         cout << "D pressed" << endl;
-        gIntensity /= 1.5;
-        cout << "gIntensity = " << gIntensity << endl;
-        glUseProgram(gProgram[0]);
-        glUniform1f(gIntensityLoc, gIntensity);
+        isAlive = !isAlive;
     }
     else if (key == GLFW_KEY_B && action == GLFW_PRESS)
     {
