@@ -21,7 +21,7 @@
 
 using namespace std;
 
-GLuint gProgram[3];
+GLuint gProgram[4];
 GLint gIntensityLoc;
 float gIntensity = 1000;
 int gWidth = 1280, gHeight = 720;
@@ -320,27 +320,34 @@ void initShaders()
 {
     gProgram[0] = glCreateProgram(); //bunny
     gProgram[1] = glCreateProgram(); //quad
-    gProgram[2] = glCreateProgram(); //text
-    //gProgram[3] = glCreateProgram(); //cubes
+    gProgram[2] = glCreateProgram(); //cubes
+    gProgram[3] = glCreateProgram(); //text
 
-    createVS(gProgram[0], "vert0.glsl");
+    createVS(gProgram[0], "vert0.glsl"); //bunny
     createFS(gProgram[0], "frag0.glsl");
 
-    createVS(gProgram[1], "vert1.glsl");
+    createVS(gProgram[1], "vert1.glsl"); //quad
     createFS(gProgram[1], "frag1.glsl");
 
-    createVS(gProgram[2], "vert_text.glsl");
-    createFS(gProgram[2], "frag_text.glsl");
+    createVS(gProgram[2], "vert2.glsl"); //cubes
+    createFS(gProgram[2], "frag2.glsl");
+
+    createVS(gProgram[3], "vert_text.glsl");
+    createFS(gProgram[3], "frag_text.glsl");
 
     glBindAttribLocation(gProgram[0], 0, "inVertex");
     glBindAttribLocation(gProgram[0], 1, "inNormal");
     glBindAttribLocation(gProgram[1], 0, "inVertex");
     glBindAttribLocation(gProgram[1], 1, "inNormal");
-    glBindAttribLocation(gProgram[2], 2, "vertex");
+    glBindAttribLocation(gProgram[2], 0, "inVertex");
+    glBindAttribLocation(gProgram[2], 1, "inNormal");
+
+    glBindAttribLocation(gProgram[3], 2, "vertex");
 
     glLinkProgram(gProgram[0]);
     glLinkProgram(gProgram[1]);
     glLinkProgram(gProgram[2]);
+    glLinkProgram(gProgram[3]);
     glUseProgram(gProgram[0]);
 
     gIntensityLoc = glGetUniformLocation(gProgram[0], "intensity");
@@ -432,8 +439,8 @@ void initFonts(int windowWidth, int windowHeight)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(windowWidth), 0.0f, static_cast<GLfloat>(windowHeight));
-    glUseProgram(gProgram[2]);
-    glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    glUseProgram(gProgram[3]);
+    glUniformMatrix4fv(glGetUniformLocation(gProgram[3], "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
     // FreeType
     FT_Library ft;
@@ -542,8 +549,8 @@ void drawModel(ModelData& model, VBOData& currentVBO)
 void renderText(const std::string& text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
     // Activate corresponding render state	
-    glUseProgram(gProgram[2]);
-    glUniform3f(glGetUniformLocation(gProgram[2], "textColor"), color.x, color.y, color.z);
+    glUseProgram(gProgram[3]);
+    glUniform3f(glGetUniformLocation(gProgram[3], "textColor"), color.x, color.y, color.z);
     glActiveTexture(GL_TEXTURE0);
 
     // Iterate through all characters
@@ -634,7 +641,7 @@ void display()
 
     T = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -2.f, -10.f));
 
-    S = glm::scale(glm::mat4(1.f), glm::vec3(2.f, 1.f, 100000.f));
+    S = glm::scale(glm::mat4(1.f), glm::vec3(4.f, 1.f, 100000.f));
 
     R = glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(1, 0, 0));
     modelMat = T * S * R;
@@ -648,11 +655,24 @@ void display()
 
     /*------------------------------------------cubes transformation and draw-------------------------------------------------*/
     
-    for (int i = 0; i < 3; i++) { // use i to place cubes on x axis and move them on z using displacement, if displacement is above some amount, make it reset to 0
+    glUseProgram(gProgram[2]);
 
+    for (int i = 0; i < 3; i++) { // use i to place cubes on x axis and move them on z using displacement, if displacement is above some amount, make it reset to 0
+        T = glm::translate(glm::mat4(1.f), glm::vec3(-0.20f, 0.f, -1.f));
+
+        S = glm::scale(glm::mat4(1.f), glm::vec3(0.05f, 0.2f, 0.05f));
+        modelMat = T * S;
+        modelMatInv = glm::transpose(glm::inverse(modelMat));
+
+        glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMat"), 1, GL_FALSE, glm::value_ptr(modelMat));
+        glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
+        glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
+
+        cout << "cube: " << i << endl;
+
+        drawModel(cubeModel, cubeVBO);
     }
     
-    //drawModel(cubeModel, cubeVBO);
 
     /*------------------------------------------text transformation and draw-------------------------------------------------*/
 
