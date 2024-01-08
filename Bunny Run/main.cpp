@@ -101,7 +101,7 @@ std::map<GLchar, Character> Characters;
 bool isAlive = true;
 float displacement = 0;
 int score = 0;
-float speed = 0.05f;
+float speed = 0.025f;
 
 
 bool ParseObj(const string& fileName, ModelData& model)
@@ -651,6 +651,8 @@ void display()
     glUniformMatrix4fv(glGetUniformLocation(gProgram[1], "modelingMat"), 1, GL_FALSE, glm::value_ptr(modelMat));
     glUniformMatrix4fv(glGetUniformLocation(gProgram[1], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
     glUniformMatrix4fv(glGetUniformLocation(gProgram[1], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
+
+    glUniform1f(glGetUniformLocation(gProgram[1], "offset"), displacement*8);
         
     drawModel(quadModel, quadVBO);
 
@@ -660,7 +662,7 @@ void display()
 
     // place cubes on x axis and move them on z using displacement, if displacement is above some amount, make it reset to 0
     
-    T = glm::translate(glm::mat4(1.f), glm::vec3(-0.25f, 0.f, -20.f + displacement));
+    T = glm::translate(glm::mat4(1.f), glm::vec3(-0.25f, -0.1f, -10.f + displacement));
 
     S = glm::scale(glm::mat4(1.f), glm::vec3(0.05f, 0.2f, 0.05f));
 
@@ -673,7 +675,7 @@ void display()
 
     drawModel(cubeModel, cubeVBO);
 
-    T = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, -20.f + displacement));
+    T = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -0.1f, -10.f + displacement));
 
     modelMat = T * S;
     modelMatInv = glm::transpose(glm::inverse(modelMat));
@@ -684,7 +686,7 @@ void display()
 
     drawModel(cubeModel, cubeVBO);
 
-    T = glm::translate(glm::mat4(1.f), glm::vec3(0.25f, 0.f, -20.f + displacement));
+    T = glm::translate(glm::mat4(1.f), glm::vec3(0.25f, -0.1f, -10.f + displacement));
 
     modelMat = T * S;
     modelMatInv = glm::transpose(glm::inverse(modelMat));
@@ -712,7 +714,7 @@ void display()
         displacement += speed;
         score += speed;
 
-        if(displacement > 20){
+        if(displacement > 10){
             displacement = 0;
         }
     }
