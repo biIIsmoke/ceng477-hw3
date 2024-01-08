@@ -23,7 +23,7 @@ using namespace std;
 
 GLuint gProgram[4];
 GLint gIntensityLoc;
-float gIntensity = 1000;
+float gIntensity = 100;
 int gWidth = 1280, gHeight = 720;
 
 struct Vertex
