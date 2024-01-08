@@ -657,21 +657,42 @@ void display()
     
     glUseProgram(gProgram[2]);
 
-    for (int i = 0; i < 3; i++) { // use i to place cubes on x axis and move them on z using displacement, if displacement is above some amount, make it reset to 0
-        T = glm::translate(glm::mat4(1.f), glm::vec3(-0.20f, 0.f, -1.f));
+    // place cubes on x axis and move them on z using displacement, if displacement is above some amount, make it reset to 0
+    
+    T = glm::translate(glm::mat4(1.f), glm::vec3(-0.25f, 0.f, -1.f));
 
-        S = glm::scale(glm::mat4(1.f), glm::vec3(0.05f, 0.2f, 0.05f));
-        modelMat = T * S;
-        modelMatInv = glm::transpose(glm::inverse(modelMat));
+    S = glm::scale(glm::mat4(1.f), glm::vec3(0.05f, 0.2f, 0.05f));
 
-        glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMat"), 1, GL_FALSE, glm::value_ptr(modelMat));
-        glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
-        glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
+    modelMat = T * S;
+    modelMatInv = glm::transpose(glm::inverse(modelMat));
 
-        cout << "cube: " << i << endl;
+    glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMat"), 1, GL_FALSE, glm::value_ptr(modelMat));
+    glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
+    glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
 
-        drawModel(cubeModel, cubeVBO);
-    }
+    drawModel(cubeModel, cubeVBO);
+
+    T = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, -1.f));
+
+    modelMat = T * S;
+    modelMatInv = glm::transpose(glm::inverse(modelMat));
+
+    glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMat"), 1, GL_FALSE, glm::value_ptr(modelMat));
+    glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
+    glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
+
+    drawModel(cubeModel, cubeVBO);
+
+    T = glm::translate(glm::mat4(1.f), glm::vec3(+0.25f, 0.f, -1.f));
+
+    modelMat = T * S;
+    modelMatInv = glm::transpose(glm::inverse(modelMat));
+
+    glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMat"), 1, GL_FALSE, glm::value_ptr(modelMat));
+    glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
+    glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
+
+    drawModel(cubeModel, cubeVBO);
     
 
     /*------------------------------------------text transformation and draw-------------------------------------------------*/
