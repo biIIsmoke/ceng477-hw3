@@ -651,6 +651,13 @@ void display()
     glm::mat4 S = glm::scale(glm::mat4(1.f), glm::vec3(0.15f, 0.25f, 0.1f));
 
     glm::mat4 R = glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(0, 1, 0));
+
+    if (isRotating) {
+        R = glm::rotate(glm::mat4(1.f), glm::radians(-90.f + angleDisplacement*10), glm::vec3(0, 1, 0));
+    }
+    if (!isAlive) {
+        R = R * glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1, 0, 0));
+    }
     glm::mat4 modelMat = T * S * R;
     glm::mat4 modelMatInv = glm::transpose(glm::inverse(modelMat));
     glm::mat4 perspMat = glm::perspective(glm::radians(120.0f), 1.f, 1.0f, 100.0f);
@@ -764,8 +771,6 @@ void display()
 
     assert(glGetError() == GL_NO_ERROR);
 
-	angleDisplacement += 0.5;
-
     if (isAlive) {
         zDisplacement += speed;
         score += 20 * speed;
@@ -813,7 +818,8 @@ void display()
         }
 
         if (isRotating) {
-            if (angleDisplacement > 360) {
+            angleDisplacement += 0.5;
+            if (angleDisplacement > 36) {
                 angleDisplacement = 0;
                 isRotating = false;
             }
@@ -848,9 +854,9 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
         score = 0;
         isAlive = true;
         speed = 0.05f;
-        canRenderCube[0] = false;
-        canRenderCube[1] = false;
-        canRenderCube[2] = false;
+        canRenderCube[0] = true;
+        canRenderCube[1] = true;
+        canRenderCube[2] = true;
     }
     else if (key == GLFW_KEY_A && action == GLFW_PRESS)
     {
