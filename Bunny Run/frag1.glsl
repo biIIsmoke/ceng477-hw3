@@ -1,29 +1,23 @@
 #version 120
 
-vec3 lightPos = vec3(5, 5, 5);
-vec3 eyePos = vec3(0, 0, 0);
-
-vec3 I = vec3(2, 2, 2);
-vec3 Iamb = vec3(0.8, 0.8, 0.8);
-
-vec3 kd = vec3(0.2, 0, 0.7);
-vec3 ka = vec3(0.1, 0.1, 0.1);
-vec3 ks = vec3(0.8, 0.8, 0.8);
-
 varying vec4 fragPos;
-varying vec3 N;
+
+vec3 color(){
+	//bool x = (int) ((fragPos.x + offset) * scale) % 2;
+
+	bool x = bool(int(mod(((fragPos.x + 0) * 0.5),2)));
+	bool y = bool(int(mod(((fragPos.y + 0) * 0.5),2)));
+	bool z = bool(int(mod(((fragPos.z + 0) * 0.5),2)));
+
+	bool xorXY = x != y;
+	if (xorXY != z)
+		return vec3(255, 255, 255);
+	else
+		return vec3(0, 0, 0);
+}
 
 void main(void)
 {
-	vec3 L = normalize(lightPos - vec3(fragPos));
-	vec3 V = normalize(eyePos - vec3(fragPos));
-	vec3 H = normalize(L + V);
-	float NdotL = dot(N, L);
-	float NdotH = dot(N, H);
-
-	vec3 diffuseColor = I * kd * max(0, NdotL);
-	vec3 ambientColor = Iamb * ka;
-	vec3 specularColor = I * ks * pow(max(0, NdotH), 20);
-
-    gl_FragColor = vec4(diffuseColor + ambientColor + specularColor, 1);
+	vec3 myColor = color();
+    gl_FragColor = vec4(myColor,1); // interpolated color computed by the rasterizer
 }
