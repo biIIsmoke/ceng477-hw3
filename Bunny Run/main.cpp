@@ -108,6 +108,7 @@ float angleDisplacement = 0;
 
 float score = 0;
 float speed = 0.05f;
+float acceleration = 0.00001f;
 bool isCubeYellow[3];
 bool canRenderCube[3] = {true,true,true};
 
@@ -775,6 +776,7 @@ void display()
         zDisplacement += speed;
         score += 20 * speed;
         yDisplacement += (speed * yDisplacementSign)/2;
+        speed += acceleration;
 
         if(zDisplacement > 8.8f){ //if cubes are behind the bunny, reset their position and shuffle their colors
 
@@ -858,7 +860,7 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
         canRenderCube[1] = true;
         canRenderCube[2] = true;
     }
-    else if (key == GLFW_KEY_A && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_A && action == GLFW_PRESS && isAlive)
     {
         cout << "A pressed" << endl;
         xDisplacement -= 0.75f;
@@ -866,19 +868,13 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
             xDisplacement = -1.5f;
         }
     }
-    else if (key == GLFW_KEY_D && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_D && action == GLFW_PRESS && isAlive)
     {
         cout << "D pressed" << endl;
         xDisplacement += 0.75f;
         if (xDisplacement > 1.5f) {
             xDisplacement = 1.5f;
         }
-    }
-    else if (key == GLFW_KEY_K && action == GLFW_PRESS)
-    {
-        cout << "K pressed" << endl;
-        isAlive = false;
-        speed = 0.f;
     }
 }
 
