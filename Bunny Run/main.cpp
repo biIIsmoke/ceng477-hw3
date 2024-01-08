@@ -101,8 +101,8 @@ std::map<GLchar, Character> Characters;
 bool isAlive = true;
 float xDisplacement = 0;
 float zDisplacement = 0;
-int score = 0;
-float speed = 0.025f;
+float score = 0;
+float speed = 0.05f;
 bool isQubeYellow[3];
 
 
@@ -741,16 +741,17 @@ void display()
         textColor = glm::vec3(255, 0, 0);
     }
 
-    renderText("Score: " + std::to_string(score), 0, 686, 1, textColor);
+    renderText("Score: " + std::to_string(int(score)), 0, 686, 1, textColor);
 
     assert(glGetError() == GL_NO_ERROR);
 
 	angle += 0.5;
+    score += 20*speed;
+
     if (isAlive) {
         zDisplacement += speed;
-        score += speed;
 
-        if(zDisplacement > 10){ //if qubes are behind the camera, reset their position and shuffle their colors
+        if(zDisplacement > 8.8f){ //if qubes are behind the bunny, reset their position and shuffle their colors
             zDisplacement = 0;
             shuffleCubeColors();
         }
@@ -780,13 +781,12 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
         xDisplacement = 0;
         zDisplacement = 0;
         score = 0;
+        isAlive = true;
         speed = 0.05f;
-        //glUseProgram(gProgram[1]);
     }
     else if (key == GLFW_KEY_A && action == GLFW_PRESS)
     {
         cout << "A pressed" << endl;
-        //glUseProgram(gProgram[0]);
         xDisplacement -= 0.75f;
         if (xDisplacement < -1.5f) {
             xDisplacement = -1.5f;
@@ -803,7 +803,8 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
     else if (key == GLFW_KEY_K && action == GLFW_PRESS)
     {
         cout << "K pressed" << endl;
-        isAlive = !isAlive;
+        isAlive = false;
+        speed = 0.f;
     }
 }
 
