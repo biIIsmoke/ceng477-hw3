@@ -8,7 +8,7 @@ vec3 eyePos = vec3(0, 0, 0);
 vec3 I = vec3(2, 2, 2);
 vec3 Iamb = vec3(0.8, 0.8, 0.8);
 
-vec3 kd = vec3(0.2, 0, 0.7);
+vec3 kd = vec3(1,0,0);
 vec3 ka = vec3(0.1, 0.1, 0.1);
 vec3 ks = vec3(0.8, 0.8, 0.8);
 
@@ -22,8 +22,7 @@ void main(void)
 	vec3 H = normalize(L + V);
 	float NdotL = dot(N, L);
 	float NdotH = dot(N, H);
-
-	kd = vec3(1,0,0); //refault red
+	
 	if(isYellow == 1){
 		kd = vec3(1,1,0);
 	}
