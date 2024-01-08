@@ -683,7 +683,7 @@ void display()
 
     drawModel(cubeModel, cubeVBO);
 
-    T = glm::translate(glm::mat4(1.f), glm::vec3(+0.25f, 0.f, -1.f));
+    T = glm::translate(glm::mat4(1.f), glm::vec3(0.25f, 0.f, -1.f));
 
     modelMat = T * S;
     modelMatInv = glm::transpose(glm::inverse(modelMat));
