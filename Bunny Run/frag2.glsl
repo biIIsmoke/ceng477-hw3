@@ -1,5 +1,7 @@
 #version 120
 
+uniform int isYellow;
+
 vec3 lightPos = vec3(5, 5, 5);
 vec3 eyePos = vec3(0, 0, 0);
 
@@ -20,8 +22,11 @@ void main(void)
 	vec3 H = normalize(L + V);
 	float NdotL = dot(N, L);
 	float NdotH = dot(N, H);
+	vec3 diffuseColor = vec3(255,0,0); //refault red
+	if(isYellow == 1){
+		diffuseColor = vec3(255,255,0);
+	}
 
-	vec3 diffuseColor = I * kd * max(0, NdotL);
 	vec3 ambientColor = Iamb * ka;
 	vec3 specularColor = I * ks * pow(max(0, NdotH), 20);
 

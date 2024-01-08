@@ -103,7 +103,19 @@ float xDisplacement = 0;
 float zDisplacement = 0;
 int score = 0;
 float speed = 0.025f;
+bool isQubeYellow[3];
 
+
+
+void shuffleCubeColors() {
+    isQubeYellow[0] = false;
+    isQubeYellow[1] = false;
+    isQubeYellow[2] = false;
+
+    int index = rand() % 3;
+    cout << "random index is: " << index << endl;
+    isQubeYellow[index] = true;
+}
 
 bool ParseObj(const string& fileName, ModelData& model)
 {
@@ -537,6 +549,8 @@ void init()
     initVBO(bunnyModel, bunnyVBO);
     initVBO(cubeModel, cubeVBO);
     initVBO(quadModel, quadVBO);
+
+    shuffleCubeColors();
 }
 
 void drawModel(ModelData& model, VBOData& currentVBO)
@@ -674,6 +688,13 @@ void display()
     glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
     glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
 
+    if (isQubeYellow[0]) {
+        glUniform1i(glGetUniformLocation(gProgram[2], "isYellow"), 1);
+    }
+    else {
+        glUniform1i(glGetUniformLocation(gProgram[2], "isYellow"), 0);
+    }
+
     drawModel(cubeModel, cubeVBO);
 
     T = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -0.1f, -10.f + zDisplacement));
@@ -685,6 +706,13 @@ void display()
     glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
     glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
 
+    if (isQubeYellow[1]) {
+        glUniform1i(glGetUniformLocation(gProgram[2], "isYellow"), 1);
+    }
+    else {
+        glUniform1i(glGetUniformLocation(gProgram[2], "isYellow"), 0);
+    }
+
     drawModel(cubeModel, cubeVBO);
 
     T = glm::translate(glm::mat4(1.f), glm::vec3(0.25f, -0.1f, -10.f + zDisplacement));
@@ -695,6 +723,13 @@ void display()
     glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMat"), 1, GL_FALSE, glm::value_ptr(modelMat));
     glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
     glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
+
+    if (isQubeYellow[2]) {
+        glUniform1i(glGetUniformLocation(gProgram[2], "isYellow"), 1);
+    }
+    else {
+        glUniform1i(glGetUniformLocation(gProgram[2], "isYellow"), 0);
+    }
 
     drawModel(cubeModel, cubeVBO);
     
@@ -715,8 +750,9 @@ void display()
         zDisplacement += speed;
         score += speed;
 
-        if(zDisplacement > 10){
+        if(zDisplacement > 10){ //if qubes are behind the camera, reset their position and shuffle their colors
             zDisplacement = 0;
+            shuffleCubeColors();
         }
     }
 }
