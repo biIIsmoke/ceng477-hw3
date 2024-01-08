@@ -100,7 +100,11 @@ std::map<GLchar, Character> Characters;
 /*-----------------------------player state-------------------------------------*/
 bool isAlive = true;
 float xDisplacement = 0;
+float yDisplacement = 0;
+int yDisplacementSign = 1;
 float zDisplacement = 0;
+float angleDisplacement = 0;
+
 float score = 0;
 float speed = 0.05f;
 bool isQubeYellow[3];
@@ -621,7 +625,6 @@ void display()
     glClearStencil(0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	static float angle = 0;
     glm::vec3 textColor = glm::vec3(255, 255, 0);
     
 
@@ -633,7 +636,7 @@ void display()
 	//glTranslatef(-2, 0, -10);
 	//glRotatef(angle, 0, 1, 0);
 
-    glm::mat4 T = glm::translate(glm::mat4(1.f), glm::vec3(0.f + xDisplacement, -1.5f, -1.2f));
+    glm::mat4 T = glm::translate(glm::mat4(1.f), glm::vec3(0.f + xDisplacement, -1.5f + yDisplacement, -1.2f));
 
     glm::mat4 S = glm::scale(glm::mat4(1.f), glm::vec3(0.15f, 0.25f, 0.1f));
 
@@ -745,15 +748,20 @@ void display()
 
     assert(glGetError() == GL_NO_ERROR);
 
-	angle += 0.5;
+	angleDisplacement += 0.5;
     score += 20*speed;
 
     if (isAlive) {
         zDisplacement += speed;
+        yDisplacement += (speed * yDisplacementSign)/2;
 
         if(zDisplacement > 8.8f){ //if qubes are behind the bunny, reset their position and shuffle their colors
             zDisplacement = 0;
             shuffleCubeColors();
+        }
+
+        if (yDisplacement > 0.5f || yDisplacement < 0) {
+            yDisplacementSign *= -1;
         }
     }
 }
