@@ -99,6 +99,7 @@ std::map<GLchar, Character> Characters;
 
 /*-----------------------------player state-------------------------------------*/
 bool isAlive = true;
+bool isRotating = false;
 float xDisplacement = 0;
 float yDisplacement = 0;
 int yDisplacementSign = 1;
@@ -107,18 +108,27 @@ float angleDisplacement = 0;
 
 float score = 0;
 float speed = 0.05f;
-bool isQubeYellow[3];
+bool isCubeYellow[3];
+bool canRenderCube[3] = {true,true,true};
 
+void getReward() {
+    score += 1000;
+    isRotating = true;
+}
+
+void endGame() {
+    isAlive = false;
+}
 
 
 void shuffleCubeColors() {
-    isQubeYellow[0] = false;
-    isQubeYellow[1] = false;
-    isQubeYellow[2] = false;
+    isCubeYellow[0] = false;
+    isCubeYellow[1] = false;
+    isCubeYellow[2] = false;
 
     int index = rand() % 3;
     cout << "random index is: " << index << endl;
-    isQubeYellow[index] = true;
+    isCubeYellow[index] = true;
 }
 
 bool ParseObj(const string& fileName, ModelData& model)
@@ -691,14 +701,16 @@ void display()
     glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
     glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
 
-    if (isQubeYellow[0]) {
+    if (isCubeYellow[0]) {
         glUniform1i(glGetUniformLocation(gProgram[2], "isYellow"), 1);
     }
     else {
         glUniform1i(glGetUniformLocation(gProgram[2], "isYellow"), 0);
     }
 
-    drawModel(cubeModel, cubeVBO);
+    if (canRenderCube[0]) {
+        drawModel(cubeModel, cubeVBO);
+    }
 
     T = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -0.1f, -10.f + zDisplacement));
 
@@ -709,14 +721,16 @@ void display()
     glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
     glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
 
-    if (isQubeYellow[1]) {
+    if (isCubeYellow[1]) {
         glUniform1i(glGetUniformLocation(gProgram[2], "isYellow"), 1);
     }
     else {
         glUniform1i(glGetUniformLocation(gProgram[2], "isYellow"), 0);
     }
 
-    drawModel(cubeModel, cubeVBO);
+    if (canRenderCube[1]) {
+        drawModel(cubeModel, cubeVBO);
+    }
 
     T = glm::translate(glm::mat4(1.f), glm::vec3(0.25f, -0.1f, -10.f + zDisplacement));
 
@@ -727,14 +741,16 @@ void display()
     glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "modelingMatInvTr"), 1, GL_FALSE, glm::value_ptr(modelMatInv));
     glUniformMatrix4fv(glGetUniformLocation(gProgram[2], "perspectiveMat"), 1, GL_FALSE, glm::value_ptr(perspMat));
 
-    if (isQubeYellow[2]) {
+    if (isCubeYellow[2]) {
         glUniform1i(glGetUniformLocation(gProgram[2], "isYellow"), 1);
     }
     else {
         glUniform1i(glGetUniformLocation(gProgram[2], "isYellow"), 0);
     }
 
-    drawModel(cubeModel, cubeVBO);
+    if (canRenderCube[2]) {
+        drawModel(cubeModel, cubeVBO);
+    }
     
 
     /*------------------------------------------text transformation and draw-------------------------------------------------*/
@@ -749,19 +765,58 @@ void display()
     assert(glGetError() == GL_NO_ERROR);
 
 	angleDisplacement += 0.5;
-    score += 20*speed;
 
     if (isAlive) {
         zDisplacement += speed;
+        score += 20 * speed;
         yDisplacement += (speed * yDisplacementSign)/2;
 
-        if(zDisplacement > 8.8f){ //if qubes are behind the bunny, reset their position and shuffle their colors
-            zDisplacement = 0;
-            shuffleCubeColors();
+        if(zDisplacement > 8.8f){ //if cubes are behind the bunny, reset their position and shuffle their colors
+
+            if (xDisplacement == -1.5f) { //first cube collision
+                if (isCubeYellow[0]) {
+                    getReward();
+                }
+                else {
+                    endGame();
+                    canRenderCube[0] = false;
+                }
+            }
+            else if (xDisplacement == 0.f) { //second cube collision
+                if (isCubeYellow[1]) {
+                    getReward();
+                }
+                else {
+                    endGame();
+                    canRenderCube[1] = false;
+                }
+
+            }
+            else if (xDisplacement == 1.5f) { //third cube collision
+                if (isCubeYellow[2]) {
+                    getReward();
+                }
+                else {
+                    endGame();
+                    canRenderCube[2] = false;
+                }
+
+            }
+            if (isAlive) {
+                zDisplacement = 0;
+                shuffleCubeColors();
+            }
         }
 
         if (yDisplacement > 0.5f || yDisplacement < 0) {
             yDisplacementSign *= -1;
+        }
+
+        if (isRotating) {
+            if (angleDisplacement > 360) {
+                angleDisplacement = 0;
+                isRotating = false;
+            }
         }
     }
 }
@@ -787,10 +842,15 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         cout << "R pressed" << endl;
         xDisplacement = 0;
+        yDisplacement = 0;
         zDisplacement = 0;
+        angleDisplacement = 0;
         score = 0;
         isAlive = true;
         speed = 0.05f;
+        canRenderCube[0] = false;
+        canRenderCube[1] = false;
+        canRenderCube[2] = false;
     }
     else if (key == GLFW_KEY_A && action == GLFW_PRESS)
     {
